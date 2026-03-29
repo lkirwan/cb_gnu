@@ -7,8 +7,8 @@
  * July 7, 2026. Probabilities are calculated using a uniform model:
  *
  *   – Group stage  : every team in a group has an equal 1/N chance of
- *                    finishing in any given position (e.g. 25% each in a
- *                    4-team group, 20% each in a 5-team group).
+ *                    finishing in any given position (25% each in a
+ *                    4-team group, since all groups have 4 teams).
  *   – Knockout leg : each team in any individual match has a 50% chance
  *                    of advancing to the next round.
  *
@@ -40,9 +40,9 @@ export const MATCH_INFO = {
 //   KNOCKOUT_WIN_PROB  – in any single knockout match with no prior results,
 //                        each team has a 50% chance of winning.
 //
-//   Group-finish prob  – with N teams in a group and no matches played, each
-//                        team has a 1/N chance of finishing in any given
-//                        position (e.g. 25% for a 4-team group).
+//   Group-finish prob  – every group has exactly 4 teams; with no matches
+//                        played, each team has a 25% (1/4) chance of
+//                        finishing in any given position.
 //                        Computed as  1 / groupSize  at run-time.
 // ---------------------------------------------------------------------------
 
@@ -57,10 +57,10 @@ export const KNOCKOUT_WIN_PROB = 0.50;
 //
 //   P(play in Match 96)  =  (1 / own-group-size)  ×  KNOCKOUT_WIN_PROB
 //
-// Teams whose group does not feed into Match 96 have probability 0.
-//   – Groups C & D (4 teams, 1st place required) : 1/4 × 0.5 = 12.5 %
-//   – Groups B & E (5 teams, 2nd place required) : 1/5 × 0.5 = 10.0 %
-//   – All other groups                           : 0.0 %
+// Every group has exactly 4 teams, so for all bracket-path groups:
+//   – Groups C & D (4 teams, 1st place required) : 1/4 × 0.5 = 12.5%
+//   – Groups B & E (4 teams, 2nd place required) : 1/4 × 0.5 = 12.5%
+//   – All other groups                           : 0.0%
 // ---------------------------------------------------------------------------
 
 const BASE_PROBABILITIES = [
@@ -96,12 +96,11 @@ const BASE_PROBABILITIES = [
   { name: "Serbia",        code: "SRB", flag: "🇷🇸", probability: 0,    confederation: "UEFA",     group: "K" },
   { name: "New Zealand",   code: "NZL", flag: "🇳🇿", probability: 0,    confederation: "OFC",      group: "F" },
 
-  // Group B – 5 teams, 2nd place leads to Match 96: P = 1/5 × 0.5 = 10.0 %
-  { name: "Colombia",      code: "COL", flag: "🇨🇴", probability: 10.0, confederation: "CONMEBOL", group: "B" },
-  { name: "Mexico",        code: "MEX", flag: "🇲🇽", probability: 10.0, confederation: "CONCACAF", isHost: true, group: "B" },
-  { name: "Ecuador",       code: "ECU", flag: "🇪🇨", probability: 10.0, confederation: "CONMEBOL", group: "B" },
-  { name: "Ghana",         code: "GHA", flag: "🇬🇭", probability: 10.0, confederation: "CAF",      group: "B" },
-  { name: "Panama",        code: "PAN", flag: "🇵🇦", probability: 10.0, confederation: "CONCACAF", group: "B" },
+  // Group B – 4 teams, 2nd place leads to Match 96: P = 1/4 × 0.5 = 12.5%
+  { name: "Colombia",      code: "COL", flag: "🇨🇴", probability: 12.5, confederation: "CONMEBOL", group: "B" },
+  { name: "Mexico",        code: "MEX", flag: "🇲🇽", probability: 12.5, confederation: "CONCACAF", isHost: true, group: "B" },
+  { name: "Ecuador",       code: "ECU", flag: "🇪🇨", probability: 12.5, confederation: "CONMEBOL", group: "B" },
+  { name: "Ghana",         code: "GHA", flag: "🇬🇭", probability: 12.5, confederation: "CAF",      group: "B" },
 
   // Group C – 4 teams, 1st place leads to Match 96: P = 1/4 × 0.5 = 12.5 %
   { name: "Morocco",       code: "MAR", flag: "🇲🇦", probability: 12.5, confederation: "CAF",      group: "C" },
@@ -115,12 +114,11 @@ const BASE_PROBABILITIES = [
   { name: "Senegal",       code: "SEN", flag: "🇸🇳", probability: 12.5, confederation: "CAF",      group: "D" },
   { name: "Algeria",       code: "ALG", flag: "🇩🇿", probability: 12.5, confederation: "CAF",      group: "D" },
 
-  // Group E – 5 teams, 2nd place leads to Match 96: P = 1/5 × 0.5 = 10.0 %
-  { name: "England",       code: "ENG", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", probability: 10.0, confederation: "UEFA",     group: "E" },
-  { name: "Switzerland",   code: "SUI", flag: "🇨🇭", probability: 10.0, confederation: "UEFA",     group: "E" },
-  { name: "Nigeria",       code: "NGA", flag: "🇳🇬", probability: 10.0, confederation: "CAF",      group: "E" },
-  { name: "Egypt",         code: "EGY", flag: "🇪🇬", probability: 10.0, confederation: "CAF",      group: "E" },
-  { name: "Jamaica",       code: "JAM", flag: "🇯🇲", probability: 10.0, confederation: "CONCACAF", group: "E" },
+  // Group E – 4 teams, 2nd place leads to Match 96: P = 1/4 × 0.5 = 12.5%
+  { name: "England",       code: "ENG", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", probability: 12.5, confederation: "UEFA",     group: "E" },
+  { name: "Switzerland",   code: "SUI", flag: "🇨🇭", probability: 12.5, confederation: "UEFA",     group: "E" },
+  { name: "Nigeria",       code: "NGA", flag: "🇳🇬", probability: 12.5, confederation: "CAF",      group: "E" },
+  { name: "Egypt",         code: "EGY", flag: "🇪🇬", probability: 12.5, confederation: "CAF",      group: "E" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -253,10 +251,10 @@ export async function getNotableProbabilities() {
 // not lead to BC Place in this round.
 //
 // Groups B and C at a glance (FIFA 2026 draw):
-//   Group B : Mexico 🇲🇽  Ecuador 🇪🇨  Colombia 🇨🇴  Ghana 🇬🇭  Panama 🇵🇦
+//   Group B : Mexico 🇲🇽  Ecuador 🇪🇨  Colombia 🇨🇴  Ghana 🇬🇭
 //   Group C : Canada 🇨🇦  Morocco 🇲🇦  Turkey 🇹🇷  Australia 🇦🇺
 //   Group D : France 🇫🇷  Senegal 🇸🇳  Algeria 🇩🇿  Croatia 🇭🇷
-//   Group E : England 🏴󠁧󠁢󠁥󠁮󠁧󠁿  Switzerland 🇨🇭  Nigeria 🇳🇬  Egypt 🇪🇬  Jamaica 🇯🇲
+//   Group E : England 🏴󠁧󠁢󠁥󠁮󠁧󠁿  Switzerland 🇨🇭  Nigeria 🇳🇬  Egypt 🇪🇬
 // ---------------------------------------------------------------------------
 
 /**
@@ -286,9 +284,9 @@ export const MATCH_96_BRACKET = {
  *
  *   P(this scenario) = (1/own-group-size) × (1/opp-group-size) × KNOCKOUT_WIN_PROB
  *
- * Because every team in each group has an equal chance of finishing in any
- * given position, and every match is a 50/50 result, all scenarios for a
- * given team have identical probability.
+ * Every group has exactly 4 teams. With equal finishing chances and a 50/50
+ * knockout match, every scenario for every team has identical probability:
+ *   1/4 × 1/4 × 0.5 × 100 = 3.125%
  *
  * @param {Object} team  A team entry from BASE_PROBABILITIES (with `.group`).
  * @returns {Array}  Array of path scenario objects, or empty array when the
@@ -328,7 +326,7 @@ export function buildTeamPaths(team) {
   const ownGroupSize    = GROUP_SIZES[group]         ?? 4;
   const oppGroupSize    = GROUP_SIZES[opponentGroup] ?? 4;
   const scenarioProbPct = (1 / ownGroupSize) * (1 / oppGroupSize) * KNOCKOUT_WIN_PROB * 100;
-  const scenarioProbPctRounded = Math.round(scenarioProbPct * 100) / 100; // 2 d.p.
+  const scenarioProbPctRounded = Math.round(scenarioProbPct * 1000) / 1000; // 3 decimal places
 
   // Every eligible opponent in the opposing group is equally likely
   const opponents = BASE_PROBABILITIES.filter((t) => t.group === opponentGroup);
