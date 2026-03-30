@@ -26,6 +26,7 @@ function App() {
   const [selectedMatchNumber, setSelectedMatchNumber] = useState(96);
   // simulatedResults: matchKey → { homeScore: string, awayScore: string }
   const [simulatedResults, setSimulatedResults] = useState({});
+  const [activeTab, setActiveTab] = useState(1);
 
   const matchConfig = MATCH_CONFIGS[selectedMatchNumber];
   // Track whether any data has been received yet so we only show the full
@@ -176,17 +177,12 @@ function App() {
 
         {!loading && !error && (
           <>
-            {/* ── Group Stage Simulator ── */}
-            <section className="app__section" aria-labelledby="simulator-heading">
-              <h2 id="simulator-heading" className="app__section-title">
-                ⚽ Group Stage Simulator
+            {/* ── Canada spotlight ── */}
+            <section className="app__section" aria-labelledby="canada-heading">
+              <h2 id="canada-heading" className="app__section-title">
+                🇨🇦 Canada's Probability
               </h2>
-              <GroupSimulator
-                bracket={matchConfig.bracket}
-                simulatedResults={simulatedResults}
-                onResultChange={handleResultChange}
-                onReset={handleReset}
-              />
+              <CanadaHighlight canada={displayCanada} matchInfo={matchConfig} />
             </section>
 
             {isSimulating && (
@@ -196,45 +192,107 @@ function App() {
               </div>
             )}
 
-            {/* ── Canada spotlight ── */}
-            <section className="app__section" aria-labelledby="canada-heading">
-              <h2 id="canada-heading" className="app__section-title">
-                🇨🇦 Canada's Probability
-              </h2>
-              <CanadaHighlight canada={displayCanada} matchInfo={matchConfig} />
-            </section>
+            {/* ── Tabbed sections ── */}
+            <div className="app__tabs">
+              <div className="app__tab-nav" role="tablist">
+                <button
+                  role="tab"
+                  aria-selected={activeTab === 1}
+                  aria-controls="tab-panel-countries"
+                  id="tab-countries"
+                  className={`app__tab-btn${activeTab === 1 ? " app__tab-btn--active" : ""}`}
+                  onClick={() => setActiveTab(1)}
+                >
+                  🌍 Countries
+                </button>
+                <button
+                  role="tab"
+                  aria-selected={activeTab === 2}
+                  aria-controls="tab-panel-paths"
+                  id="tab-paths"
+                  className={`app__tab-btn${activeTab === 2 ? " app__tab-btn--active" : ""}`}
+                  onClick={() => setActiveTab(2)}
+                >
+                  🗺️ Paths
+                </button>
+                <button
+                  role="tab"
+                  aria-selected={activeTab === 3}
+                  aria-controls="tab-panel-simulator"
+                  id="tab-simulator"
+                  className={`app__tab-btn${activeTab === 3 ? " app__tab-btn--active" : ""}`}
+                  onClick={() => setActiveTab(3)}
+                >
+                  ⚽ Simulator
+                </button>
+              </div>
 
-            {/* ── Tournament paths ── */}
-            <section className="app__section" aria-labelledby="paths-heading">
-              <h2 id="paths-heading" className="app__section-title">
-                🗺️ Tournament Paths to Match {matchConfig.matchNumber}
-              </h2>
-              <p className="app__section-desc">
-                How each country can reach Match {matchConfig.matchNumber} at{" "}
-                {matchConfig.venue}, {matchConfig.city} on{" "}
-                {matchConfig.scheduledDate}. Each line shows a distinct
-                scenario — a different group-stage finish position or a
-                different Round of 32 opponent — together with its estimated
-                probability.
-              </p>
-              <TournamentPathSection
-                teamPaths={getTournamentPaths(displayTeams, matchConfig.bracket)}
-                matchInfo={matchConfig}
-              />
-            </section>
+              {/* Tab 1: All countries > 1% */}
+              <div
+                id="tab-panel-countries"
+                role="tabpanel"
+                aria-labelledby="tab-countries"
+                hidden={activeTab !== 1}
+              >
+                <section className="app__section app__section--tab" aria-labelledby="countries-heading">
+                  <h2 id="countries-heading" className="app__section-title">
+                    All Countries with Probability &gt; 1%
+                  </h2>
+                  <p className="app__section-desc">
+                    Showing {displayTeams.length} countries whose estimated probability of
+                    playing in Match {matchConfig.matchNumber} exceeds 1%.
+                    Probabilities update automatically after each completed match.
+                  </p>
+                  <ProbabilityList teams={displayTeams} />
+                </section>
+              </div>
 
-            {/* ── All countries > 1 % ── */}
-            <section className="app__section" aria-labelledby="countries-heading">
-              <h2 id="countries-heading" className="app__section-title">
-                All Countries with Probability &gt; 1%
-              </h2>
-              <p className="app__section-desc">
-                Showing {displayTeams.length} countries whose estimated probability of
-                playing in Match {matchConfig.matchNumber} exceeds 1%.
-                Probabilities update automatically after each completed match.
-              </p>
-              <ProbabilityList teams={displayTeams} />
-            </section>
+              {/* Tab 2: Tournament paths */}
+              <div
+                id="tab-panel-paths"
+                role="tabpanel"
+                aria-labelledby="tab-paths"
+                hidden={activeTab !== 2}
+              >
+                <section className="app__section app__section--tab" aria-labelledby="paths-heading">
+                  <h2 id="paths-heading" className="app__section-title">
+                    🗺️ Tournament Paths to Match {matchConfig.matchNumber}
+                  </h2>
+                  <p className="app__section-desc">
+                    How each country can reach Match {matchConfig.matchNumber} at{" "}
+                    {matchConfig.venue}, {matchConfig.city} on{" "}
+                    {matchConfig.scheduledDate}. Each line shows a distinct
+                    scenario — a different group-stage finish position or a
+                    different Round of 32 opponent — together with its estimated
+                    probability.
+                  </p>
+                  <TournamentPathSection
+                    teamPaths={getTournamentPaths(displayTeams, matchConfig.bracket)}
+                    matchInfo={matchConfig}
+                  />
+                </section>
+              </div>
+
+              {/* Tab 3: Group Stage Simulator */}
+              <div
+                id="tab-panel-simulator"
+                role="tabpanel"
+                aria-labelledby="tab-simulator"
+                hidden={activeTab !== 3}
+              >
+                <section className="app__section app__section--tab" aria-labelledby="simulator-heading">
+                  <h2 id="simulator-heading" className="app__section-title">
+                    ⚽ Group Stage Simulator
+                  </h2>
+                  <GroupSimulator
+                    bracket={matchConfig.bracket}
+                    simulatedResults={simulatedResults}
+                    onResultChange={handleResultChange}
+                    onReset={handleReset}
+                  />
+                </section>
+              </div>
+            </div>
 
             {/* ── Status bar ── */}
             <LastUpdated
