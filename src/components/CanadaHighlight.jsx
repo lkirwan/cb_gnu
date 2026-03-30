@@ -37,11 +37,11 @@ function CanadaHighlight({ canada, matchInfo }) {
       <div className="canada-highlight__bar">
         <div
           className="canada-highlight__bar-fill"
-          style={{ width: `${Math.min(canada.probability * 5, 100)}%` }}
+          style={{ width: `${Math.min(canada.probability, 100)}%` }}
           role="progressbar"
           aria-valuenow={canada.probability}
           aria-valuemin={0}
-          aria-valuemax={20}
+          aria-valuemax={100}
           aria-label={`Canada probability: ${pct}%`}
         />
       </div>
