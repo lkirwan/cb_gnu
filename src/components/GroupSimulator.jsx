@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { generateGroupMatches, computeGroupStandings, getSimulatorGroups } from "../services/worldCupService.js";
 
 /**
@@ -14,8 +14,10 @@ import { generateGroupMatches, computeGroupStandings, getSimulatorGroups } from 
  *   simulatedResults – Object mapping matchKey → { homeScore, awayScore }.
  *   onResultChange   – Callback (matchKey, field, value) called on score input.
  *   onReset          – Callback to clear all simulated scores.
+ *   onAutoPopulate   – Callback (results) invoked with a full set of random scores
+ *                      (0–7 inclusive) for every match in all relevant groups.
  */
-function GroupSimulator({ bracket, simulatedResults, onResultChange, onReset }) {
+function GroupSimulator({ bracket, simulatedResults, onResultChange, onReset, onAutoPopulate }) {
   const relevantGroups = useMemo(() => getSimulatorGroups(bracket), [bracket]);
   const allMatches     = useMemo(() => generateGroupMatches(relevantGroups), [relevantGroups]);
 
@@ -30,6 +32,17 @@ function GroupSimulator({ bracket, simulatedResults, onResultChange, onReset }) 
     (r) => r.homeScore !== "" || r.awayScore !== ""
   );
 
+  const handleAutoPopulate = useCallback(() => {
+    const results = {};
+    allMatches.forEach((match) => {
+      results[match.key] = {
+        homeScore: String(Math.floor(Math.random() * 8)),
+        awayScore: String(Math.floor(Math.random() * 8)),
+      };
+    });
+    onAutoPopulate(results);
+  }, [allMatches, onAutoPopulate]);
+
   return (
     <div className="simulator">
       <div className="simulator__toolbar">
@@ -39,15 +52,24 @@ function GroupSimulator({ bracket, simulatedResults, onResultChange, onReset }) 
           automatically as you type. Leave a score blank to keep the uniform
           (equal-chance) model for that group.
         </p>
-        {hasAnyResult && (
+        <div className="simulator__btn-group">
           <button
-            className="simulator__reset-btn"
-            onClick={onReset}
-            aria-label="Reset all simulated scores"
+            className="simulator__autopopulate-btn"
+            onClick={handleAutoPopulate}
+            aria-label="Auto-populate all match scores with random numbers"
           >
-            ↺ Reset all scores
+            🎲 Auto-populate scores
           </button>
-        )}
+          {hasAnyResult && (
+            <button
+              className="simulator__reset-btn"
+              onClick={onReset}
+              aria-label="Reset all simulated scores"
+            >
+              ↺ Reset all scores
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="simulator__groups">

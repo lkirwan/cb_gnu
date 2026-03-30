@@ -595,6 +595,33 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
   border-color: #e08080;
 }
 
+.simulator__btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.simulator__autopopulate-btn {
+  flex-shrink: 0;
+  background: #f0f4ff;
+  border: 1px solid #b0c4f5;
+  border-radius: 8px;
+  color: #2c4a9e;
+  font-size: 0.83rem;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.simulator__autopopulate-btn:hover {
+  background: #dce8ff;
+  border-color: #7090e0;
+}
+
 .simulator__groups {
   display: flex;
   flex-direction: column;
