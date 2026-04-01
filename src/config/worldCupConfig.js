@@ -83,7 +83,7 @@ export const TEAM_DATA = [
 
   // Group B – 1st place leads to Match 96 via R32 M85: P = 1/4 × 0.5 = 12.5%
   { name: "Canada",                            code: "CAN",   flag: "🇨🇦", confederation: "CONCACAF", isHost: true, group: "B" },
-  { name: "TBC (Italy / Bosnia & Herzegovina)", code: "TBC_B", flag: "🏳️", confederation: "UEFA",                  group: "B" },
+  { name: "Italy",                              code: "ITA",   flag: "🇮🇹", confederation: "UEFA",                  group: "B" },
   { name: "Qatar",                             code: "QAT",   flag: "🇶🇦", confederation: "AFC",                   group: "B" },
   { name: "Switzerland",                       code: "SUI",   flag: "🇨🇭", confederation: "UEFA",                  group: "B" },
 
