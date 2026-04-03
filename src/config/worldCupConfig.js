@@ -43,20 +43,25 @@ export const MATCH_CONFIGS = {
     country: "Canada",
     scheduledDate: "July 7, 2026",
     description: "FIFA World Cup 2026 – Match 96 (Round of 16) at BC Place, Vancouver",
+    label: "R16 Match 96",
+    sideA: "W85",
+    sideB: "W87",
     bracket: {
       // Slot 1 enters Match 96 via R32 Match 85
       // hostTeamSlot: true – Canada (Group B) plays the sideB team here in R32 M85.
       // A sideB team that wins M85 eliminates Canada and cannot then play Canada in M96.
       // Therefore sideB paths for this slot are excluded from the M96 probability calculation.
-      slot1: {
+      sideA: {
         r32Label: "R32 Match 85",
+        label: "1B vs 3EFGIJ",
         sideA: { group: "B", position: 1 }, // 1st Group B plays best 3rd from EFGIJ
         sideB: { thirdPlace: true, eligibleGroups: ["E", "F", "G", "I", "J"], label: "3EFGIJ" },
         hostTeamSlot: true,
       },
       // Slot 2 enters Match 96 via R32 Match 87
-      slot2: {
+      sideB: {
         r32Label: "R32 Match 87",
+        label: "1K vs 3DEIJL",
         sideA: { group: "K", position: 1 }, // 1st Group K plays best 3rd from DEIJL
         sideB: { thirdPlace: true, eligibleGroups: ["D", "E", "I", "J", "L"], label: "3DEIJL" },
       },
